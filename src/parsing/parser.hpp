@@ -9,10 +9,10 @@ public:
     DOMNode *root;
     std::map<std::string, std::map<std::string, std::string>> css;
 
-    DOMNode *parse_html(std::string code);
+    std::string parse_html(std::string code);
 
 private:
-  std::string remove_whitespace(std::string str);
-}
+    std::string remove_whitespace(std::string str);
+};
 
 #endif

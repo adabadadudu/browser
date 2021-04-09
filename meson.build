@@ -4,7 +4,8 @@ cpp_files = [
 'src/main.cpp',
 'src/http/http.cpp',
 'src/http/https.cpp',
-'src/parsing/dom.cpp'
+'src/parsing/dom.cpp',
+'src/parsing/parser.cpp'
 
 ]
 
