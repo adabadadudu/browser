@@ -15,6 +15,6 @@ int main(int argc, char *argv[])
     std::cout << response;
 
     Parser parser;
-    std::cout << parser.parse_html("<div> <p> <code>");
+    parser.parse_html("<html> <div> <p>");
     return 0;
 }

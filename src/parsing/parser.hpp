@@ -6,10 +6,10 @@
 class Parser
 {
 public:
-    DOMNode *root;
+    DOMNode *root_node;
     std::map<std::string, std::map<std::string, std::string>> css;
 
-    std::string parse_html(std::string code);
+    DOMNode* parse_html(std::string code);
 
 private:
     std::string remove_whitespace(std::string str);
