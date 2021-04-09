@@ -25,7 +25,6 @@ html -|
 */
 
 
-// Here, since we're using the object-oriented paradigm we want to use polymorphism
 class DOMNode
 {
 
