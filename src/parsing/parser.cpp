@@ -1,4 +1,5 @@
 #include "parser.hpp"
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <wctype.h>
@@ -75,8 +76,8 @@ DOMNode *Parser::parse_html(std::string code)
 
             if (current_char == ' ' || current_char == '>') // if at the end of the tag
             {
-                holder = remove_whitespace(holder);
 
+	       holder = remove_whitespace(holder); // Remove every space
                 current_node->name = holder;
 
                 if (root == current_node)
@@ -89,6 +90,8 @@ DOMNode *Parser::parse_html(std::string code)
             }
             break;
         }
+        default:
+            break;
         }
 
         number_of_chars++;
