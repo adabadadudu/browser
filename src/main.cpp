@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
     std::cout << response;
 
     Parser parser;
-    parser.parse_html("<html> <div> <p>");
+    parser.parse_html("<body> <div> Hello </div> </body>");
+    std::cout << "Text data of " << parser.root_node->children[0]->name << " is " << "'" << parser.root_node->children[0]->text << "'" << std::endl;
+
     return 0;
 }

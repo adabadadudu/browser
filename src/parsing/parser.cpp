@@ -3,17 +3,20 @@
 #include <iostream>
 #include <string>
 #include <wctype.h>
+
+// Spoiler alert: most of the code is inspired by https://github.com/jackfischer/andreessen
+
 enum state
 {
     TAGNAME,
-    INTAG,
+    BETWEENTAGS,
     ENDTAG
 };
 
 DOMNode *Parser::parse_html(std::string code)
 {
     char current_char = code[0], last_char;
-    bool parsing = true, equal_sign = false;
+    bool parsing = true, equal_sign = false, tag_name = false, between_tag = false;
 
     // The number of characters and the current parsing state.
     int number_of_chars = 1, state;
@@ -30,6 +33,9 @@ DOMNode *Parser::parse_html(std::string code)
         last_char = current_char;
         current_char = code[number_of_chars];
 
+        if (last_char == '<')
+            tag_name = false;
+
         if (last_char == '<' && current_char != '/')
         {
             state = TAGNAME;
@@ -37,7 +43,7 @@ DOMNode *Parser::parse_html(std::string code)
 
         if (last_char == '>' && current_char != '<')
         {
-            state = INTAG;
+            state = BETWEENTAGS;
         }
 
         if (current_char == '/' && last_char == '<')
@@ -74,32 +80,106 @@ DOMNode *Parser::parse_html(std::string code)
                 current_node = node;
             }
 
-            if (current_char == ' ' || current_char == '>') // if at the end of the tag
+            if ((current_char == ' ' || current_char == '>') && !tag_name) // if at the end of the tag
             {
 
-	       holder = remove_whitespace(holder); // Remove every space
+                holder = remove_whitespace(holder); // Remove every space
                 current_node->name = holder;
 
                 if (root == current_node)
-                    std::cout << "Created new root node: " << holder << "\n";
+                    std::cout << "Created new root node: " << current_node->name << "\n";
                 else
-                    std::cout << "Created new node: " << holder << " with " << current_node->parent->name << " as parent"
+                    std::cout << "Created new node: " << current_node->name << " with " << current_node->parent->name << " as parent"
                               << "\n";
 
                 holder = "";
+                tag_name = true;
+            }
+
+            break;
+        }
+
+        case BETWEENTAGS:
+        {
+
+            if (current_char == '<')
+            {
+
+                state = ENDTAG;
+                between_tag = true;
+                break;
+            }
+            holder += current_char;
+            break;
+        }
+
+        case ENDTAG:
+        {
+
+            if (between_tag)
+            {
+
+                int position_b, position_e;
+
+                for (int i = 0; i < holder.size(); i++)
+                {
+                    if (!std::iswspace(holder[i]))
+                    {
+                        position_b = i;
+                        break;
+                    }
+                    else
+                        position_b = i;
+                }
+
+                for (int i = holder.size() - 1; i >= 0; i--)
+                {
+                    if (!std::iswspace(holder[i]))
+                    {
+                        position_e = i + 1;
+                        break;
+                    }
+                    else
+                    {
+                        position_e = i;
+                    }
+                }
+
+                bool junk = (position_e <= position_b) ? true : false;
+
+                if (!junk)
+                {
+                    holder = holder.substr(position_b, position_e);
+                    current_node->text = holder;
+                    between_tag = false;
+                }
+                else
+                {
+                    between_tag = false;
+                }
+                holder = "";
+            }
+
+            if (current_char == '>')
+            {
+                if (current_node == root)
+                    break;
+
+                current_node = current_node->parent;
             }
             break;
         }
         default:
             break;
         }
-
         number_of_chars++;
 
         if (number_of_chars == code.length())
             parsing = false;
     }
-    return current_node;
+
+    root_node = root;
+    return root;
 }
 
 std::string Parser::remove_whitespace(std::string string)
@@ -119,6 +199,7 @@ std::string Parser::remove_whitespace(std::string string)
             position_b = i;
         }
     }
+
     for (int i = string.size() - 1; i >= 0; i--)
     {
         if (!std::iswspace(string[i]))
