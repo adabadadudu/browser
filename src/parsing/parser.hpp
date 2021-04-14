@@ -9,7 +9,8 @@ public:
     DOMNode *root_node;
     std::map<std::string, std::map<std::string, std::string>> css;
 
-    DOMNode* parse_html(std::string code);
+    DOMNode *parse_html(std::string code);
+    DOMNode *find_node(DOMNode *base, std::string name);
 
 private:
     std::string remove_whitespace(std::string str);

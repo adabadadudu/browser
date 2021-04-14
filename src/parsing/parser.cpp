@@ -182,6 +182,23 @@ DOMNode *Parser::parse_html(std::string code)
     return root;
 }
 
+DOMNode *Parser::find_node(DOMNode *base, std::string name)
+{
+
+    if (base->name == name)
+    {
+        return base;
+    }
+
+    for (int i = 0; i < base->children.size(); i++)
+    {
+
+        if (base->children[i]->name == name)
+        {
+            return base->children[i];
+        }
+    }
+}
 std::string Parser::remove_whitespace(std::string string)
 {
     int position_b;
