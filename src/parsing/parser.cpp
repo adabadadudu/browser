@@ -21,11 +21,10 @@ enum css_state
     OFF
 };
 
-DOMNode *
-Parser::parse_html(std::string code)
+DOMNode *Parser::parse_html(std::string code)
 {
     char current_char = code[0], last_char;
-    bool parsing = true, equal_sign = false, tag_name = false, between_tag = false;
+    bool parsing = true, tag_name = false, between_tag = false;
 
     // The number of characters and the current parsing state.
     int number_of_chars = 1, state;
@@ -66,7 +65,7 @@ Parser::parse_html(std::string code)
         {
 
             // Here we only want to get the letters out of the tag name and not spaces.
-            if (std::isalpha(current_char) && current_char != ' ')
+            if ((std::isalpha(current_char) || std::isdigit(current_char)) && current_char != ' ')
             {
                 holder += current_char;
             }
@@ -187,34 +186,93 @@ Parser::parse_html(std::string code)
             parsing = false;
     }
 
+    css = parse_css(find_css(root));
     root_node = root;
+    //delete_style(root_node);
     return root;
 }
 
 DOMNode *Parser::find_node(DOMNode *base, std::string name)
 {
-
     if (base->name == name)
     {
         return base;
     }
 
-    for (int i = 0; i < base->children.size(); i++)
+    else if (base->children.size() >= 1)
     {
 
-        if (base->children[i]->name == name)
+        auto it = find_if(base->children.begin(), base->children.end(), [&](const DOMNode &obj) { return obj.name == name; });
+
+        int pos = 0;
+
+        if (it != base->children.end())
         {
-            return base->children[i];
+            pos = std::distance(base->children.begin(), it);
         }
+
+        return find_node(base->children[pos], name);
     }
 
-    return NULL;
+    else
+    {
+        return NULL;
+    }
+}
+
+std::string Parser::find_css(DOMNode *n)
+{
+    if (n->name == "style")
+    {
+        return n->text;
+    }
+
+    else if (n->children.size() >= 1)
+    {
+
+        auto it = find_if(n->children.begin(), n->children.end(), [&](const DOMNode &obj) { return obj.name == "style"; });
+
+        int pos = 0;
+        if (it != n->children.end())
+        {
+            pos = std::distance(n->children.begin(), it);
+        }
+        return find_css(n->children[pos]);
+    }
+
+    else
+    {
+        return "";
+    }
+}
+
+void Parser::delete_style(DOMNode *n)
+{
+    if (n->name.compare("style") && n->parent != 0)
+    {
+        DOMNode *p = n->parent;
+        for (uint i = 0; i < p->children.size(); i++)
+        {
+            if (p->children[i] == n)
+            {
+                p->children.erase(p->children.begin() + i);
+            }
+        }
+    }
+    else
+    {
+        for (uint i = 0; i < n->children.size(); i++)
+        {
+            delete_style(n->children[i]);
+        }
+    }
 }
 
 std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std::string code)
 {
     code.erase(std::remove(code.begin(), code.end(), '\n'), code.end());
     code.erase(std::remove(code.begin(), code.end(), ' '), code.end());
+    code.erase(std::remove(code.begin(), code.end(), '\t'), code.end());
 
     std::map<std::string, std::map<std::string, std::string>> map;
 
@@ -230,7 +288,7 @@ std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std:
         {
             state = CLASSNAME;
             b_class = true;
-	    b_tag = false;
+            b_tag = false;
         }
 
         else if (state == CLASSNAME && c != '{')
@@ -241,16 +299,16 @@ std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std:
         else if (state == OFF && c != '{')
         {
             tag.push_back(c);
-	    
+
             b_tag = true;
             b_class = false;
         }
-	
+
         else if (state == OFF && c == '{')
         {
-	  state = CODE;
+            state = CODE;
         }
-	
+
         else if (state == CLASSNAME && c == '{')
         {
             state = CODE;
@@ -269,8 +327,8 @@ std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std:
         else if (state == CODE && c == '}')
         {
             s_class = " ";
-	    tag = " ";
-	    
+            tag = " ";
+
             state = OFF;
         }
 

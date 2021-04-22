@@ -1,5 +1,6 @@
 #include "http/http.hpp"
 #include "http/https.hpp"
+#include "layout/engine.hpp"
 #include "parsing/parser.hpp"
 #include <iostream>
 int main(int argc, char *argv[])
@@ -15,16 +16,9 @@ int main(int argc, char *argv[])
     std::cout << response;
 
     Parser parser;
-    parser.parse_html("<body> <div> <p> Hello </p> </div> </body>");
-    std::cout << "Text data of " << parser.root_node->children[0]->name << " is "
-              << "'" << parser.root_node->children[0]->text << "'" << std::endl;
 
-    std::cout << "Found node: " << parser.find_node(parser.root_node, "div")->name << std::endl;
+    parser.parse_html(response);
 
-    std::string code = "p {color: yellow; background-color: red;}";
-    auto css = parser.parse_css(code);
-
-    std::cout << css["p"]["color"] << std::endl;
-    std::cout << css["p"]["background-color"] << std::endl;    
+    std::cout << parser.css["body"]["background-color"] << std::endl;
     return 0;
 }

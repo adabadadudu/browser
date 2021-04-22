@@ -10,11 +10,13 @@ public:
     std::map<std::string, std::map<std::string, std::string>> css;
 
     DOMNode *parse_html(std::string code);
-    DOMNode *find_node(DOMNode *base, std::string name); 
+    DOMNode *find_node(DOMNode *base, std::string name);
     std::map<std::string, std::map<std::string, std::string>> parse_css(std::string code);
+    std::string find_css(DOMNode *n);
 
 private:
     std::string remove_whitespace(std::string str);
+    void delete_style(DOMNode *n);
 };
 
 #endif
