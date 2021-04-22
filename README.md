@@ -6,7 +6,9 @@ pls send help
 Won't be anything big, just a toy browser.
 Features (right now):
 - HTTP(s)
-- WIP DOM thing
+- CSS parsing
+- HTML parsing
+- WIP rendering
 <br>
 
 **It won't support JS.**
