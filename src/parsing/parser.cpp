@@ -44,7 +44,7 @@ DOMNode *Parser::parse_html(std::string code)
         if (last_char == '<')
             tag_name = false;
 
-        if (last_char == '<' && current_char != '/')
+        if ((last_char == '<' && current_char != '/' && current_char != '-' && current_char != '!'))
         {
             state = TAGNAME;
         }
@@ -326,8 +326,8 @@ std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std:
 
         else if (state == CODE && c == '}')
         {
-            s_class = " ";
-            tag = " ";
+            s_class = "";
+            tag = "";
 
             state = OFF;
         }
@@ -363,7 +363,7 @@ std::string Parser::remove_whitespace(std::string string)
     int position_b;
     int position_e;
 
-    for (int i = 0; i < string.size(); i++)
+    for (int i = 0; i < (int)string.size(); i++)
     {
         if (!std::iswspace(string[i]))
         {

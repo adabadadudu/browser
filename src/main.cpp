@@ -1,12 +1,16 @@
-#include "http/http.hpp"
-#include "http/https.hpp"
-#include "layout/engine.hpp"
-#include "parsing/parser.hpp"
+#include <http/http.hpp>
+#include <http/https.hpp>
 #include <iostream>
+#include <layout/engine.hpp>
+#include <parsing/parser.hpp>
+#include <render/renderer.hpp>
 int main(int argc, char *argv[])
 {
 
-    std::string url = argv[1];
+    std::string url = "127.0.0.1";
+    if (argc > 1)
+        url = argv[1];
+
     Http h;
 
     h.connect(url, 8000); // For web server testing
@@ -17,8 +21,15 @@ int main(int argc, char *argv[])
 
     Parser parser;
 
-    parser.parse_html(response);
+    auto root = parser.parse_html(response);
+    auto css = parser.css;
 
-    std::cout << parser.css["body"]["background-color"] << std::endl;
+    std::cout << css["p"]["font-size"] << std::endl;
+
+    Renderer renderer(parser.root_node, css);
+
+    renderer.render_node(root->children[1]->children[0]);
+
+    renderer.main();
     return 0;
 }

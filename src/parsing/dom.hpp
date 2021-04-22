@@ -1,5 +1,6 @@
 #ifndef DOM_NODE_H
 #define DOM_NODE_H
+#include <layout/engine.hpp>
 #include <map>
 #include <string>
 #include <vector>
@@ -24,7 +25,6 @@ html -|
                        |_ Image 
 */
 
-
 class DOMNode
 {
 
@@ -36,6 +36,7 @@ public:
     std::map<std::string, std::string> attributes;
     std::string text;
 
+    LayoutData layout_data;
     DOMNode();                // Class constructor for the root node
     DOMNode(DOMNode *parent); // Class constructor for the children nodes
 
