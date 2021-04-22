@@ -13,7 +13,16 @@ enum state
     ENDTAG
 };
 
-DOMNode *Parser::parse_html(std::string code)
+enum css_state
+{
+    CLASSNAME,
+    PROPERTY,
+    CODE,
+    OFF
+};
+
+DOMNode *
+Parser::parse_html(std::string code)
 {
     char current_char = code[0], last_char;
     bool parsing = true, equal_sign = false, tag_name = false, between_tag = false;
@@ -121,7 +130,7 @@ DOMNode *Parser::parse_html(std::string code)
 
                 int position_b, position_e;
 
-                for (int i = 0; i < holder.size(); i++)
+                for (size_t i = 0; i < holder.size(); i++)
                 {
                     if (!std::iswspace(holder[i]))
                     {
@@ -132,7 +141,7 @@ DOMNode *Parser::parse_html(std::string code)
                         position_b = i;
                 }
 
-                for (int i = holder.size() - 1; i >= 0; i--)
+                for (size_t i = holder.size() - 1; i >= 0; i--)
                 {
                     if (!std::iswspace(holder[i]))
                     {
@@ -174,7 +183,7 @@ DOMNode *Parser::parse_html(std::string code)
         }
         number_of_chars++;
 
-        if (number_of_chars == code.length())
+        if (number_of_chars == (int)code.length())
             parsing = false;
     }
 
@@ -198,7 +207,99 @@ DOMNode *Parser::find_node(DOMNode *base, std::string name)
             return base->children[i];
         }
     }
+
+    return NULL;
 }
+
+std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std::string code)
+{
+    code.erase(std::remove(code.begin(), code.end(), '\n'), code.end());
+    code.erase(std::remove(code.begin(), code.end(), ' '), code.end());
+
+    std::map<std::string, std::map<std::string, std::string>> map;
+
+    int state = OFF;
+
+    std::string s_class, field, value, tag;
+
+    bool b_class = false, b_tag = false;
+
+    for (char c : code)
+    {
+        if (state == OFF && c == '.')
+        {
+            state = CLASSNAME;
+            b_class = true;
+	    b_tag = false;
+        }
+
+        else if (state == CLASSNAME && c != '{')
+        {
+            s_class.push_back(c);
+        }
+
+        else if (state == OFF && c != '{')
+        {
+            tag.push_back(c);
+	    
+            b_tag = true;
+            b_class = false;
+        }
+	
+        else if (state == OFF && c == '{')
+        {
+	  state = CODE;
+        }
+	
+        else if (state == CLASSNAME && c == '{')
+        {
+            state = CODE;
+        }
+
+        else if (state == CODE && c != ':' && c != '}')
+        {
+            field.push_back(c);
+        }
+
+        else if (state == CODE && c == ':')
+        {
+            state = PROPERTY;
+        }
+
+        else if (state == CODE && c == '}')
+        {
+            s_class = " ";
+	    tag = " ";
+	    
+            state = OFF;
+        }
+
+        else if (state == PROPERTY && c != ';')
+        {
+            value.push_back(c);
+        }
+
+        else if (state == PROPERTY && c == ';')
+        {
+            if (b_class)
+            {
+                map[s_class][field] = value;
+            }
+
+            if (b_tag)
+            {
+                map[tag][field] = value;
+            }
+
+            field = "";
+            value = "";
+            state = CODE;
+        }
+    }
+
+    return map;
+}
+
 std::string Parser::remove_whitespace(std::string string)
 {
     int position_b;

@@ -17,8 +17,14 @@ int main(int argc, char *argv[])
     Parser parser;
     parser.parse_html("<body> <div> <p> Hello </p> </div> </body>");
     std::cout << "Text data of " << parser.root_node->children[0]->name << " is "
-              << "'" << parser.root_node->children[0]->text << "'" <<std::endl;
+              << "'" << parser.root_node->children[0]->text << "'" << std::endl;
 
-    std::cout << "Found node: " << parser.find_node(parser.root_node, "div")->name << std::endl;
+    std::cout << "Found node: " << parser.find_node(parser.root_node, "div")->name << std::endl;
+
+    std::string code = "p {color: yellow; background-color: red;}";
+    auto css = parser.parse_css(code);
+
+    std::cout << css["p"]["color"] << std::endl;
+    std::cout << css["p"]["background-color"] << std::endl;    
     return 0;
 }
