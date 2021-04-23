@@ -24,7 +24,7 @@ enum css_state
 DOMNode *Parser::parse_html(std::string code)
 {
     char current_char = code[0], last_char;
-    bool parsing = true, tag_name = false, between_tag = false;
+    bool parsing = true, tag_name = false, equal_sign = false, between_tag = false;
 
     // The number of characters and the current parsing state.
     int number_of_chars = 1, state;
@@ -32,7 +32,7 @@ DOMNode *Parser::parse_html(std::string code)
     DOMNode *current_node, *root = 0;
 
     // This is just a temporary string.
-    std::string holder;
+    std::string holder, key_holder;
 
     while (parsing)
     {
@@ -104,6 +104,20 @@ DOMNode *Parser::parse_html(std::string code)
                 tag_name = true;
             }
 
+            if (holder.size() != 0 && (current_char == ' ' || current_char == '>') && equal_sign)
+            {
+                current_node->add_attribute(key_holder, holder);
+                key_holder = "";
+                holder = "";
+                equal_sign = false;
+            }
+	    
+            if (current_char == '=')
+            {
+                equal_sign = true;
+                key_holder = holder;
+                holder = "";
+            }
             break;
         }
 

@@ -8,7 +8,7 @@ Renderer::Renderer(DOMNode *root, std::map<std::string, std::map<std::string, st
 
 void Renderer::main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "AWB");
+    sf::RenderWindow window(sf::VideoMode(1920, 1080), "AWB");
 
     font.loadFromFile("assets/times-new-roman.ttf");
 
@@ -33,7 +33,6 @@ void Renderer::main()
 void Renderer::render_node(DOMNode *n)
 {
 
-    std::cout << css[n->name]["font-size"];
     text.setCharacterSize(std::atoi(css[n->name]["font-size"].c_str()));
 
     text.setFillColor(sf::Color::Black);
