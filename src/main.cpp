@@ -24,13 +24,12 @@ int main(int argc, char *argv[])
     auto root = parser.parse_html(response);
     auto css = parser.css;
 
-    orca::Engine engine(parser.root_node, css);
-
-    engine.to_layout_data();
+    orca::Engine engine(root, css);
     
     Renderer renderer(css);
 
-    renderer.render_node(root->children[1]->children[0]);
+    
+    renderer.render(engine.to_layout_data());
 
     renderer.main();
     return 0;

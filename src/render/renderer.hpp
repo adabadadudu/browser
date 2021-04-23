@@ -9,7 +9,7 @@ class Renderer
 {
 public:
     Renderer(std::map<std::string, std::map<std::string, std::string>> p_css);
-    void render_node(DOMNode *n);
+    void render(std::vector<orca::LayoutData> layout_data);
     void main();
     std::map<std::string, std::map<std::string, std::string>> css;
 

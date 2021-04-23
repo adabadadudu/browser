@@ -1,5 +1,7 @@
 #include <engine/orca.hpp>
+#include <iostream>
 #include <stack>
+
 using namespace orca;
 
 std::vector<DOMNode *> Engine::get_all_nodes()
@@ -26,10 +28,59 @@ std::vector<DOMNode *> Engine::get_all_nodes()
     return result;
 }
 
+std::string Engine::get_value(std::string name, DOMNode *node, std::string default_s)
+{
+
+    std::string value;
+
+    while (value.empty())
+    {
+        value = css[node->name][name];
+
+        if (!css[node->attributes["class"]][name].empty())
+            value = css[node->attributes["class"]][name];
+
+        if (!css[node->name][name].empty())
+            value = css[node->name][name];
+
+        if (value.empty())
+            value = default_s;
+    }
+    
+    return value;
+}
+
+std::string Engine::get_value(std::string name, DOMNode *node, std::string other_name, std::string default_s)
+{
+
+    std::string value;
+
+    while (value.empty())
+    {
+        value = css[node->name][name];
+
+        if (!css[node->attributes["class"]][name].empty())
+            value = css[node->attributes["class"]][name];
+
+        if (!css[node->attributes["class"]][other_name].empty())
+            value = css[node->attributes["class"]][other_name];
+
+        if (!css[node->name][name].empty())
+            value = css[node->name][name];
+
+        if (!css[node->name][other_name].empty())
+            value = css[node->name][other_name];
+
+        if (value.empty())
+            value = default_s;
+    }
+    return value;
+}
+
 std::vector<LayoutData> Engine::to_layout_data()
 {
     std::map<std::string, uint32_t> colors = {
-        {"black", 0x000000ff},
+        {"black", 0x00000000},
         {"white", 0xffffffff},
         {"red", 0xff0000ff},
         {"yellow", 0xffff00ff},
@@ -42,27 +93,15 @@ std::vector<LayoutData> Engine::to_layout_data()
 
     for (auto n : nodes)
     {
-        std::string bg_color = "", color = "";
-        while (bg_color.empty())
-        {
-            bg_color = css[n->name]["background"];
-            bg_color = css[n->name]["background-color"];
-            bg_color = css[n->attributes["class"]]["background"];
-            bg_color = css[n->attributes["class"]]["background-color"];
+        std::string color, bg_color, text_size;
+        bg_color = get_value("background-color", n, "background", "white");
+	
+        color = get_value("color", n, "black");
+	
+        text_size = get_value("font-size", n, "12");
 
-            if (bg_color.empty())
-                bg_color = colors["white"];
-        }
-
-        while (color.empty())
-        {
-            color = css[n->name]["color"];
-            color = css[n->attributes["class"]]["color"];
-
-            if (color.empty())
-                color = colors["black"];
-        }
-
+        n->layout_data.text_size = std::atoi(text_size.c_str());
+        n->layout_data.text = n->text;
         n->layout_data.bg_color = colors[bg_color];
         n->layout_data.color = colors[color];
 	

@@ -32,20 +32,21 @@ void Renderer::main()
     }
 }
 
-void Renderer::render_node(DOMNode *n)
+void Renderer::render(std::vector<orca::LayoutData> layout_data)
 {
 
-    sf::Text text;
+    for (auto div : layout_data)
+    {
+        sf::Text text;
 
-    text.setCharacterSize(std::atoi(css[n->attributes["class"]]["font-size"].c_str()));
+        text.setCharacterSize(div.text_size);
 
-    std::cout << "text: " << n->text << std::endl;
+        auto color = sf::Color{div.color};
 
-    auto color = sf::Color {n->layout_data.color};
+        text.setFillColor(color);
 
-    text.setFillColor(color);
+        text.setString(div.text + '\n');
 
-    text.setString(n->text);
-
-    texts.push_back(text);
+        texts.push_back(text);
+    }
 }
