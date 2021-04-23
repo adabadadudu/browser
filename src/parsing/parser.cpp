@@ -111,7 +111,7 @@ DOMNode *Parser::parse_html(std::string code)
                 holder = "";
                 equal_sign = false;
             }
-	    
+
             if (current_char == '=')
             {
                 equal_sign = true;
