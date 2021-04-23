@@ -1,11 +1,9 @@
 #include "renderer.hpp"
 #include <iostream>
-Renderer::Renderer(DOMNode *root, std::map<std::string, std::map<std::string, std::string>> p_css)
+Renderer::Renderer(std::map<std::string, std::map<std::string, std::string>> p_css)
+    : css(p_css)
 {
-
-    css = p_css;
 }
-
 void Renderer::main()
 {
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "AWB");
@@ -26,6 +24,7 @@ void Renderer::main()
         }
 
         window.clear(sf::Color::White);
+
         for (auto &text : texts)
             window.draw(text);
 
@@ -33,14 +32,18 @@ void Renderer::main()
     }
 }
 
-void Renderer::render_node(DOMNode *n, int voff)
+void Renderer::render_node(DOMNode *n)
 {
 
     sf::Text text;
-    text.setPosition(0, voff);
+
     text.setCharacterSize(std::atoi(css[n->attributes["class"]]["font-size"].c_str()));
 
-    text.setFillColor(sf::Color::Black);
+    std::cout << "text: " << n->text << std::endl;
+
+    auto color = sf::Color {n->layout_data.color};
+
+    text.setFillColor(color);
 
     text.setString(n->text);
 

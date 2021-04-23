@@ -28,10 +28,8 @@ void DOMNode::add_attribute(std::string key, std::string data)
 void DOMNode::add_attributes_to_children()
 {
 
-
     for (uint i = 0; i < children.size(); i++)
     {
-      for(auto p : attributes)
-          children[i]->add_attribute(p.first, p.second);
+        children[i]->add_attribute("class", attributes["class"]);
     }
 }

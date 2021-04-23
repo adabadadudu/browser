@@ -1,6 +1,6 @@
 #ifndef DOM_NODE_H
 #define DOM_NODE_H
-#include <layout/engine.hpp>
+#include <engine/data.hpp>
 #include <map>
 #include <string>
 #include <vector>
@@ -36,7 +36,7 @@ public:
     std::map<std::string, std::string> attributes;
     std::string text;
 
-    LayoutData layout_data;
+    orca::LayoutData layout_data;
     DOMNode();                // Class constructor for the root node
     DOMNode(DOMNode *parent); // Class constructor for the children nodes
 

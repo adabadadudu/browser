@@ -1,7 +1,7 @@
+#include <engine/orca.hpp>
 #include <http/http.hpp>
 #include <http/https.hpp>
 #include <iostream>
-#include <layout/engine.hpp>
 #include <parsing/parser.hpp>
 #include <render/renderer.hpp>
 int main(int argc, char *argv[])
@@ -24,13 +24,14 @@ int main(int argc, char *argv[])
     auto root = parser.parse_html(response);
     auto css = parser.css;
 
-    std::cout << root->children[1]->children[0]->children[1]->children[0]->children[0]->attributes["class"] << std::endl;
+    orca::Engine engine(parser.root_node, css);
 
-    Renderer renderer(parser.root_node, css);
-
-    renderer.render_node(root->children[1]->children[0]->children[1]->children[0]->children[0], 0);
-    renderer.render_node(root->children[1]->children[0]->children[0], 30);
+    engine.to_layout_data();
     
+    Renderer renderer(css);
+
+    renderer.render_node(root->children[1]->children[0]);
+
     renderer.main();
     return 0;
 }
