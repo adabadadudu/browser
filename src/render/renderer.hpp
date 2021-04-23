@@ -7,13 +7,13 @@ class Renderer
 {
 public:
     Renderer(DOMNode *root, std::map<std::string, std::map<std::string, std::string>> p_css);
-    void render_node(DOMNode *n);
+    void render_node(DOMNode *n, int voff);
     void main();
     std::map<std::string, std::map<std::string, std::string>> css;
 
 private:
     sf::Font font;
-    sf::Text text;
+    std::vector<sf::Text> texts;
     LayoutData ld;
 };
 #endif

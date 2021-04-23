@@ -98,12 +98,20 @@ DOMNode *Parser::parse_html(std::string code)
 
                 holder = remove_whitespace(holder); // Remove every space
                 current_node->name = holder;
-
                 if (root == current_node)
                     std::cout << "Created new root node: " << current_node->name << "\n";
                 else
+                {
                     std::cout << "Created new node: " << current_node->name << " with " << current_node->parent->name << " as parent"
                               << "\n";
+
+                    if (!current_node->has_class)
+                        current_node->parent->add_attributes_to_children();
+                    else
+                    {
+                        current_node->add_attributes_to_children();
+                    }
+                }
 
                 holder = "";
                 plain_holder = "";
@@ -114,9 +122,14 @@ DOMNode *Parser::parse_html(std::string code)
             {
 
                 current_node->add_attribute(key_holder, plain_holder);
-                key_holder = "";
-                plain_holder = "";
-		holder = "";
+		std::cout << "Attribute " << key_holder << " : " << plain_holder << std::endl;
+
+                if (key_holder == "class")
+                {
+                    current_node->has_class = true;
+                }
+
+                holder = "";
                 equal_sign = false;
             }
 
@@ -125,7 +138,7 @@ DOMNode *Parser::parse_html(std::string code)
                 equal_sign = true;
                 key_holder = holder;
                 holder = "";
-		plain_holder = "";
+                plain_holder = "";
             }
             break;
         }
@@ -267,7 +280,6 @@ std::string Parser::find_css(DOMNode *n)
         return "";
     }
 }
-
 
 std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std::string code)
 {

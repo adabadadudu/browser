@@ -1,5 +1,5 @@
 #include "dom.hpp"
-
+#include <iostream>
 DOMNode::DOMNode()
 {
     parent = 0;
@@ -17,10 +17,21 @@ void DOMNode::add_child(DOMNode *node)
 
 void DOMNode::set_parent(DOMNode *p)
 {
-  parent = p;
+    parent = p;
 }
 
 void DOMNode::add_attribute(std::string key, std::string data)
 {
-  attributes[key] = data;
+    attributes[key] = data;
+}
+
+void DOMNode::add_attributes_to_children()
+{
+
+
+    for (uint i = 0; i < children.size(); i++)
+    {
+      for(auto p : attributes)
+          children[i]->add_attribute(p.first, p.second);
+    }
 }

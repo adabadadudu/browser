@@ -12,7 +12,8 @@ void Renderer::main()
 
     font.loadFromFile("assets/times-new-roman.ttf");
 
-    text.setFont(font);
+    for (auto &text : texts)
+        text.setFont(font);
 
     window.setFramerateLimit(60);
     while (window.isOpen())
@@ -25,17 +26,23 @@ void Renderer::main()
         }
 
         window.clear(sf::Color::White);
-        window.draw(text);
+        for (auto &text : texts)
+            window.draw(text);
+
         window.display();
     }
 }
 
-void Renderer::render_node(DOMNode *n)
+void Renderer::render_node(DOMNode *n, int voff)
 {
 
+    sf::Text text;
+    text.setPosition(0, voff);
     text.setCharacterSize(std::atoi(css[n->attributes["class"]]["font-size"].c_str()));
 
     text.setFillColor(sf::Color::Black);
 
     text.setString(n->text);
+
+    texts.push_back(text);
 }

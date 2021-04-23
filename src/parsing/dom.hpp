@@ -42,7 +42,11 @@ public:
 
     void add_child(DOMNode *node);
     void set_parent(DOMNode *parent);
-    void add_attribute(std::string key, std::string data); // Attributes can be "class", "background-color",...
+    void add_attribute(std::string key, std::string data); // Attributes can be "class", "link",...
+
+    void add_attributes_to_children();
+
+    bool has_class = false;
 };
 
 #endif
