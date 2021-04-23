@@ -16,7 +16,6 @@ public:
 
 private:
     std::string remove_whitespace(std::string str);
-    void delete_style(DOMNode *n);
 };
 
 #endif

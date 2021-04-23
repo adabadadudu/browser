@@ -33,7 +33,7 @@ void Renderer::main()
 void Renderer::render_node(DOMNode *n)
 {
 
-    text.setCharacterSize(std::atoi(css[n->name]["font-size"].c_str()));
+    text.setCharacterSize(std::atoi(css[n->attributes["class"]]["font-size"].c_str()));
 
     text.setFillColor(sf::Color::Black);
 

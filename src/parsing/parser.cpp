@@ -32,7 +32,7 @@ DOMNode *Parser::parse_html(std::string code)
     DOMNode *current_node, *root = 0;
 
     // This is just a temporary string.
-    std::string holder, key_holder;
+    std::string holder, key_holder, plain_holder;
 
     while (parsing)
     {
@@ -65,9 +65,14 @@ DOMNode *Parser::parse_html(std::string code)
         {
 
             // Here we only want to get the letters out of the tag name and not spaces.
-            if ((std::isalpha(current_char) || std::isdigit(current_char)) && current_char != ' ')
+            if ((std::isdigit(current_char) || std::isalpha(current_char)) && current_char != ' ' && current_char != '>')
             {
                 holder += current_char;
+            }
+
+            if (current_char != ' ' && current_char != '>' && current_char != '"')
+            {
+                plain_holder += current_char;
             }
 
             if (!root && last_char == '<') // If the root of the tree is undefined, let the tag be it.
@@ -101,14 +106,17 @@ DOMNode *Parser::parse_html(std::string code)
                               << "\n";
 
                 holder = "";
+                plain_holder = "";
                 tag_name = true;
             }
 
-            if (holder.size() != 0 && (current_char == ' ' || current_char == '>') && equal_sign)
+            if (plain_holder.size() != 0 && (current_char == ' ' || current_char == '>') && equal_sign)
             {
-                current_node->add_attribute(key_holder, holder);
+
+                current_node->add_attribute(key_holder, plain_holder);
                 key_holder = "";
-                holder = "";
+                plain_holder = "";
+		holder = "";
                 equal_sign = false;
             }
 
@@ -117,6 +125,7 @@ DOMNode *Parser::parse_html(std::string code)
                 equal_sign = true;
                 key_holder = holder;
                 holder = "";
+		plain_holder = "";
             }
             break;
         }
@@ -202,7 +211,6 @@ DOMNode *Parser::parse_html(std::string code)
 
     css = parse_css(find_css(root));
     root_node = root;
-    //delete_style(root_node);
     return root;
 }
 
@@ -260,27 +268,6 @@ std::string Parser::find_css(DOMNode *n)
     }
 }
 
-void Parser::delete_style(DOMNode *n)
-{
-    if (n->name.compare("style") && n->parent != 0)
-    {
-        DOMNode *p = n->parent;
-        for (uint i = 0; i < p->children.size(); i++)
-        {
-            if (p->children[i] == n)
-            {
-                p->children.erase(p->children.begin() + i);
-            }
-        }
-    }
-    else
-    {
-        for (uint i = 0; i < n->children.size(); i++)
-        {
-            delete_style(n->children[i]);
-        }
-    }
-}
 
 std::map<std::string, std::map<std::string, std::string>> Parser::parse_css(std::string code)
 {
