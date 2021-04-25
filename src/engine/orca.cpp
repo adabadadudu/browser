@@ -1,7 +1,9 @@
+#include <cstdio>
 #include <engine/orca.hpp>
 #include <iostream>
 #include <stack>
-
+#include <unistd.h>
+#include <utils/log.hpp>
 using namespace orca;
 
 std::vector<DOMNode *> Engine::get_all_nodes()
@@ -46,7 +48,7 @@ std::string Engine::get_value(std::string name, DOMNode *node, std::string defau
         if (value.empty())
             value = default_s;
     }
-    
+
     return value;
 }
 
@@ -79,6 +81,7 @@ std::string Engine::get_value(std::string name, DOMNode *node, std::string other
 
 std::vector<LayoutData> Engine::to_layout_data()
 {
+
     std::map<std::string, uint32_t> colors = {
         {"black", 0x00000000},
         {"white", 0xffffffff},
@@ -95,16 +98,32 @@ std::vector<LayoutData> Engine::to_layout_data()
     {
         std::string color, bg_color, text_size;
         bg_color = get_value("background-color", n, "background", "white");
-	
+
         color = get_value("color", n, "black");
-	
+
+        bool hex = false;
+
+        if (color.find("#") != std::string::npos)
+        {
+            color.erase(0, 1);
+
+            if (color.size() > 4)
+                color += "ff";
+
+            hex = true;
+        }
+
         text_size = get_value("font-size", n, "12");
 
         n->layout_data.text_size = std::atoi(text_size.c_str());
         n->layout_data.text = n->text;
         n->layout_data.bg_color = colors[bg_color];
-        n->layout_data.color = colors[color];
-	
+
+        if (!hex)
+            n->layout_data.color = colors[color];
+        else
+            n->layout_data.color = static_cast<uint32_t>(std::stoul(color, 0, 16));
+
         result.push_back(n->layout_data);
     }
 

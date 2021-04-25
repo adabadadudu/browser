@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <utils/log.hpp>
 #include <wctype.h>
-
 // Spoiler alert: most of the code is inspired by https://github.com/jackfischer/andreessen
 
 enum state
@@ -99,11 +99,10 @@ DOMNode *Parser::parse_html(std::string code)
                 holder = remove_whitespace(holder); // Remove every space
                 current_node->name = holder;
                 if (root == current_node)
-                    std::cout << "Created new root node: " << current_node->name << "\n";
+                    log(INFO, "Created new root node: %s", current_node->name.c_str());
                 else
                 {
-                    std::cout << "Created new node: " << current_node->name << " with " << current_node->parent->name << " as parent"
-                              << "\n";
+                    log(INFO, "Created new node: %s with %s as parent", current_node->name.c_str(), current_node->parent->name.c_str());
 
                     if (!current_node->has_class)
                         current_node->parent->add_attributes_to_children();
@@ -122,8 +121,7 @@ DOMNode *Parser::parse_html(std::string code)
             {
 
                 current_node->add_attribute(key_holder, plain_holder);
-		std::cout << "Attribute " << key_holder << " : " << plain_holder << std::endl;
-
+                log(INFO,"Node \"%s\" attribute \"%s\": \"%s\"", current_node->name.c_str(), key_holder.c_str(), plain_holder.c_str());
                 if (key_holder == "class")
                 {
                     current_node->has_class = true;

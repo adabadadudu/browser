@@ -12,6 +12,7 @@ extern "C"
 #include <strings.h>
 #include <unistd.h>
 #include <vector>
+#include <utils/log.hpp>
 
 void Http::connect(std::string url, int port)
 {
@@ -38,6 +39,8 @@ void Http::connect(std::string url, int port)
     {
         std::cerr << "Connection failure\n";
     }
+
+    log(INFO,"Connected to %s:%d via HTTP", name_c, port);
 }
 
 std::string Http::make_request(std::string request)
@@ -46,8 +49,8 @@ std::string Http::make_request(std::string request)
 
     send(Http::socket_, request.c_str(), std::string(request).length(), 0);
 
-    sleep(1);
-
+    usleep(2000);
+    
     std::vector<char> buffer(BUFFER_SIZE);
 
     read(Http::socket_, buffer.data(), buffer.size());

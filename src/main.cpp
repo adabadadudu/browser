@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     h.connect(url, 8000); // For web server testing
 
     std::string response = h.entry_point(url, 8000);
-
+    
     std::cout << response;
 
     Parser parser;
@@ -24,11 +24,10 @@ int main(int argc, char *argv[])
     auto root = parser.parse_html(response);
     auto css = parser.css;
 
-    orca::Engine engine(root, css);
-    
+    orca::Engine engine(parser.root_node, css);
+
     Renderer renderer(css);
 
-    
     renderer.render(engine.to_layout_data());
 
     renderer.main();
