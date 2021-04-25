@@ -7,12 +7,11 @@ extern "C"
 #include <sys/socket.h>
 #include <sys/types.h>
 }
-#include <iostream>
 #include <string>
 #include <strings.h>
 #include <unistd.h>
-#include <vector>
 #include <utils/log.hpp>
+#include <vector>
 
 void Http::connect(std::string url, int port)
 {
@@ -32,15 +31,15 @@ void Http::connect(std::string url, int port)
 
     if (Http::socket_ == -1)
     {
-        std::cerr << "socket creation failure\n";
+        log(ERROR, "socket creation failure");
     }
 
     if (::connect(Http::socket_, (const struct sockaddr *)&address, sizeof(address)) != 0)
     {
-        std::cerr << "Connection failure\n";
+        log(ERROR, "Connection failure");
     }
 
-    log(INFO,"Connected to %s:%d via HTTP", name_c, port);
+    log(INFO, "Connected to %s:%d via HTTP", name_c, port);
 }
 
 std::string Http::make_request(std::string request)
@@ -50,7 +49,7 @@ std::string Http::make_request(std::string request)
     send(Http::socket_, request.c_str(), std::string(request).length(), 0);
 
     usleep(2000);
-    
+
     std::vector<char> buffer(BUFFER_SIZE);
 
     read(Http::socket_, buffer.data(), buffer.size());

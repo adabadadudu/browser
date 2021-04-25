@@ -1,6 +1,4 @@
-#include <cstdio>
 #include <engine/orca.hpp>
-#include <iostream>
 #include <stack>
 #include <unistd.h>
 #include <utils/log.hpp>
@@ -41,10 +39,10 @@ std::string Engine::get_value(std::string name, DOMNode *node, std::string defau
 
         if (!css[node->name][name].empty())
             value = css[node->name][name];
-	
+
         if (!css[node->attributes["class"]][name].empty())
             value = css[node->attributes["class"]][name];
-	
+
         if (value.empty())
             value = default_s;
     }
@@ -129,6 +127,5 @@ std::vector<LayoutData> Engine::to_layout_data()
 
         result.push_back(n->layout_data);
     }
-
     return result;
 }

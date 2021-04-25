@@ -10,7 +10,7 @@ class Renderer
 public:
     Renderer(std::map<std::string, std::map<std::string, std::string>> p_css);
     void render(std::vector<orca::LayoutData> layout_data);
-    void main();
+    void main(std::string url);
     std::map<std::string, std::map<std::string, std::string>> css;
 
 private:

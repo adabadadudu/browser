@@ -8,10 +8,9 @@ extern "C"
 #include <sys/socket.h>
 #include <sys/types.h>
 }
-
-#include <iostream>
 #include <strings.h>
 #include <unistd.h>
+#include <utils/log.hpp>
 #include <vector>
 
 void Https::connect(std::string url, int port)
@@ -33,12 +32,12 @@ void Https::connect(std::string url, int port)
 
     if (Https::socket_ == -1)
     {
-        std::cerr << "socket creation failure\n";
+        log(ERROR, "socket creation failure");
     }
 
     if (::connect(Https::socket_, (const struct sockaddr *)&address, sizeof(address)) != 0)
     {
-        std::cerr << "Connection failure\n";
+        log(ERROR, "Connection failure\n");
     }
 
     SSL_library_init();
@@ -53,7 +52,7 @@ void Https::connect(std::string url, int port)
 
     if (!ssl)
     {
-        std::cerr << "Error creating SSL.\n";
+        log(ERROR, "Error creating SSL.");
         return;
     }
 
@@ -62,7 +61,7 @@ void Https::connect(std::string url, int port)
     int err = SSL_connect(ssl);
     if (err <= 0)
     {
-        std::cout << "Error creating SSL connection.  err=" << err;
+        log(ERROR, "Error creating SSL connection.  err=%d", err);
     }
 }
 
@@ -81,11 +80,11 @@ std::string Https::make_request(std::string request) // Function to send a packe
     {
         len = SSL_read(ssl, buffer.data(), 100);
 
-        std::cout << buffer.data();
+        printf("%s", buffer.data());
 
     } while (len > 0);
 
-    std::cout << buffer.data();
+    printf("%s",buffer.data());
 
     return buffer.data();
 }

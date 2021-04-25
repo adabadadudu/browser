@@ -1,6 +1,5 @@
 #include "parser.hpp"
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <utils/log.hpp>
 #include <wctype.h>

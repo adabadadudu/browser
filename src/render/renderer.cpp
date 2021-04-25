@@ -1,12 +1,12 @@
 #include "renderer.hpp"
-#include <iostream>
+#include <gui/urlbar.hpp>
 #include <utils/log.hpp>
 
 Renderer::Renderer(std::map<std::string, std::map<std::string, std::string>> p_css)
     : css(p_css)
 {
 }
-void Renderer::main()
+void Renderer::main(std::string url)
 {
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "AWB");
 
@@ -16,6 +16,10 @@ void Renderer::main()
         text.setFont(font);
 
     window.setFramerateLimit(60);
+
+    BottomBar bottom_bar;
+    bottom_bar.make_bar("http://" + url, &window);
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -31,14 +35,17 @@ void Renderer::main()
         {
             window.draw(text);
         }
-
+	
+        window.draw(bottom_bar.rect);
+        window.draw(bottom_bar.text);
+	
         window.display();
     }
 }
 
 void Renderer::render(std::vector<orca::LayoutData> layout_data)
 {
-    for (int i = 0; i < layout_data.size(); i++)
+    for (uint i = 0; i < layout_data.size(); i++)
     {
         sf::Text text;
         auto div = layout_data[i];

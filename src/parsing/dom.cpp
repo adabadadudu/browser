@@ -1,5 +1,4 @@
 #include "dom.hpp"
-#include <iostream>
 DOMNode::DOMNode()
 {
     parent = 0;

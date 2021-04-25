@@ -3,6 +3,7 @@
 #include <map>
 #include <parsing/dom.hpp>
 #include <string>
+#include <utils/log.hpp>
 
 namespace orca
 {
@@ -11,7 +12,7 @@ class Engine
 {
 public:
     DOMNode *root;
-    Engine(DOMNode *root, std::map<std::string, std::map<std::string, std::string>> css) : root(root), css(css) {}
+    Engine(DOMNode *root, std::map<std::string, std::map<std::string, std::string>> css) : root(root), css(css) { log(INFO, "orca engine started!"); }
 
     std::map<std::string, std::map<std::string, std::string>> css;
 

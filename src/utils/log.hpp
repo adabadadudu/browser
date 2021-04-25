@@ -2,12 +2,10 @@
 #define LOG_HPP
 
 #include <cstring>
-#include <iostream>
 #include <stdarg.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-
+#include <string>
+#include <cwctype>
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
 enum
