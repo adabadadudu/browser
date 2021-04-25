@@ -5,7 +5,7 @@ SRCS :=$(shell find $(SRC_DIRS) -name *.cpp)
 OBJS := $(addsuffix .o,$(basename $(SRCS)))
 
 LDFLAGS = -lssl -lcrypto -lsfml-graphics -lsfml-window -lsfml-system
-CFLAGS ?= -pedantic -g -Wall -Wextra -Isrc/
+CFLAGS ?= -pedantic -g -Wall -Wextra -Isrc/ -Wno-gnu-zero-variadic-macro-arguments
 
 %.o: %.cpp
 	@echo [ CXX ] $<
