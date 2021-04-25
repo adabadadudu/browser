@@ -16,6 +16,7 @@ public:
 private:
     sf::Font font;
     std::vector<sf::Text> texts;
+    float voff = 0;
     orca::LayoutData ld;
 };
 #endif

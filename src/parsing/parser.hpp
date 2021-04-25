@@ -16,6 +16,7 @@ public:
 
 private:
     std::string remove_whitespace(std::string str);
+    void add_css_to_children(DOMNode *n);
 };
 
 #endif

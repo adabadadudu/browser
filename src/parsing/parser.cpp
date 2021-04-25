@@ -21,6 +21,22 @@ enum css_state
     OFF
 };
 
+void Parser::add_css_to_children(DOMNode *n)
+{
+
+    for (uint i = 0; i < n->children.size(); i++)
+    {
+        if (n->children[i]->name != "head")
+        {
+            for (auto p : css[n->name])
+            {
+                css[n->children[i]->name][p.first] = p.second;
+            }
+
+            add_css_to_children(n->children[i]);
+        }
+    }
+}
 DOMNode *Parser::parse_html(std::string code)
 {
     char current_char = code[0], last_char;
@@ -121,7 +137,7 @@ DOMNode *Parser::parse_html(std::string code)
             {
 
                 current_node->add_attribute(key_holder, plain_holder);
-                log(INFO,"Node \"%s\" attribute \"%s\": \"%s\"", current_node->name.c_str(), key_holder.c_str(), plain_holder.c_str());
+                log(INFO, "Node \"%s\" attribute \"%s\": \"%s\"", current_node->name.c_str(), key_holder.c_str(), plain_holder.c_str());
                 if (key_holder == "class")
                 {
                     current_node->has_class = true;
@@ -222,6 +238,7 @@ DOMNode *Parser::parse_html(std::string code)
 
     css = parse_css(find_css(root));
     root_node = root;
+    add_css_to_children(root);
     return root;
 }
 

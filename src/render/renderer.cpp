@@ -1,5 +1,7 @@
 #include "renderer.hpp"
 #include <iostream>
+#include <utils/log.hpp>
+
 Renderer::Renderer(std::map<std::string, std::map<std::string, std::string>> p_css)
     : css(p_css)
 {
@@ -26,7 +28,9 @@ void Renderer::main()
         window.clear(sf::Color::White);
 
         for (auto &text : texts)
+        {
             window.draw(text);
+        }
 
         window.display();
     }
@@ -34,19 +38,27 @@ void Renderer::main()
 
 void Renderer::render(std::vector<orca::LayoutData> layout_data)
 {
-
-    for (auto div : layout_data)
+    for (int i = 0; i < layout_data.size(); i++)
     {
         sf::Text text;
+        auto div = layout_data[i];
 
         text.setCharacterSize(div.text_size);
+
+        if (i == 0)
+            text.setPosition({0, 0});
+        else
+            text.setPosition(0, voff);
 
         auto color = sf::Color{div.color};
 
         text.setFillColor(color);
 
-        text.setString(div.text + '\n');
+        div.text += "\n\n";
+        text.setString(div.text);
 
         texts.push_back(text);
+
+        voff += div.text_size * 2;
     }
 }

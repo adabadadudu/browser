@@ -4,6 +4,8 @@
 #include <iostream>
 #include <parsing/parser.hpp>
 #include <render/renderer.hpp>
+#include <utils/log.hpp>
+
 int main(int argc, char *argv[])
 {
 
@@ -24,6 +26,8 @@ int main(int argc, char *argv[])
     auto root = parser.parse_html(response);
     auto css = parser.css;
 
+    log(DEBUG, "%s", css["p"]["color"].c_str());
+    
     orca::Engine engine(parser.root_node, css);
 
     Renderer renderer(css);

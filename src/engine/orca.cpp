@@ -39,12 +39,12 @@ std::string Engine::get_value(std::string name, DOMNode *node, std::string defau
     {
         value = css[node->name][name];
 
-        if (!css[node->attributes["class"]][name].empty())
-            value = css[node->attributes["class"]][name];
-
         if (!css[node->name][name].empty())
             value = css[node->name][name];
-
+	
+        if (!css[node->attributes["class"]][name].empty())
+            value = css[node->attributes["class"]][name];
+	
         if (value.empty())
             value = default_s;
     }
@@ -118,6 +118,9 @@ std::vector<LayoutData> Engine::to_layout_data()
         n->layout_data.text_size = std::atoi(text_size.c_str());
         n->layout_data.text = n->text;
         n->layout_data.bg_color = colors[bg_color];
+
+        n->layout_data.width = std::atoi(get_value("width", n, text_size).c_str());
+        n->layout_data.height = std::atoi(get_value("height", n, text_size).c_str());
 
         if (!hex)
             n->layout_data.color = colors[color];

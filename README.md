@@ -12,7 +12,7 @@ Features (right now):
 
 ## Supported CSS
 - font-size (numbers only) 
-- color (names and WIP hex) 
+- color (names and 6 digit hex)
 
 <br>
 
