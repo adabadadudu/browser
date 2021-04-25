@@ -9,6 +9,11 @@ Features (right now):
 - CSS parsing
 - HTML parsing
 - WIP rendering
+
+## Supported CSS
+- font-size (numbers only) 
+- color (names and WIP hex) 
+
 <br>
 
 **It won't support JS.**
