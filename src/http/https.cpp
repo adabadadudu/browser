@@ -71,20 +71,25 @@ std::string Https::make_request(std::string request) // Function to send a packe
 
     SSL_write(ssl, request.c_str(), request.length());
 
-    sleep(1);
+    ssize_t r = -1;
+
+    usleep(2000);
 
     std::vector<char> buffer(BUFFER_SIZE);
-    int len;
 
     do
     {
-        len = SSL_read(ssl, buffer.data(), 100);
+        r = SSL_read(ssl, buffer.data(), BUFFER_SIZE);
+
+        if (r == 0)
+        {
+            log(WARNING, "Reached the end of data stream.");
+            continue;
+        }
 
         printf("%s", buffer.data());
 
-    } while (len > 0);
-
-    printf("%s",buffer.data());
+    } while (r < 0);
 
     return buffer.data();
 }
@@ -102,7 +107,7 @@ std::string Https::entry_point(std::string url, int port)
 {
     connect(url, port);
 
-    std::string request = "GET /index.html HTTP/1.1\nHost: " + url + "\n\n";
+    std::string request = "GET /index.html HTTP/1.1\r\nHost: " + url + "\r\n\r\n";
 
     std::string response = make_request(request);
 

@@ -10,10 +10,11 @@ int main(int argc, char *argv[])
 
     std::string url = "127.0.0.1";
     int port = 8000;
-    if (argc > 1)
+    /*if (argc > 1)
         url = argv[1];
     if (argc >= 2)
-        port = std::atoi(argv[2]);
+        port = std::atoi(argv[2]);*/
+    
     Http h;
 
     h.connect(url, port); // For web server testing
@@ -34,5 +35,6 @@ int main(int argc, char *argv[])
     renderer.render(engine.to_layout_data());
 
     renderer.main(url + ":" + std::to_string(port));
+    
     return 0;
 }
