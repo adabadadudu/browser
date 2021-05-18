@@ -3,38 +3,55 @@
 #include <http/https.hpp>
 #include <parsing/parser.hpp>
 #include <render/renderer.hpp>
+#include <telescope/tel-parser.hpp>
+#include <telescope/tel-renderer.hpp>
+#include <telescope/telescope.hpp>
 #include <utils/log.hpp>
-
 int main(int argc, char *argv[])
 {
 
-    std::string url = "127.0.0.1";
-    int port = 8000;
-    /*if (argc > 1)
+    if (argc > 1 && strcmp(argv[1], "--html") == 0)
+    {
+        std::string url = "127.0.0.1";
+        int port = 8000;
+        /*if (argc > 1)
         url = argv[1];
     if (argc >= 2)
         port = std::atoi(argv[2]);*/
-    
-    Http h;
 
-    h.connect(url, port); // For web server testing
+        Http h;
 
-    std::string response = h.entry_point(url, port);
+        h.connect(url, port); // For web server testing
 
-    printf("%s", response.c_str());
+        std::string response = h.entry_point(url, port);
 
-    Parser parser;
+        printf("%s", response.c_str());
 
-    auto root = parser.parse_html(response);
-    auto css = parser.css;
+        Parser parser;
 
-    orca::Engine engine(parser.root_node, css);
+        auto root = parser.parse_html(response);
+        auto css = parser.css;
 
-    Renderer renderer(css);
+        orca::Engine engine(parser.root_node, css);
 
-    renderer.render(engine.to_layout_data());
+        Renderer renderer(css);
 
-    renderer.main(url + ":" + std::to_string(port));
-    
+        renderer.render(engine.to_layout_data());
+
+        renderer.main(url + ":" + std::to_string(port));
+    }
+    else
+    {
+        Telescope telescope;
+        telescope.connect("127.0.0.1");
+	std::string response = telescope.make_request();
+        TelescopeParser tel_parser;
+        std::vector<TelescopeObject> objects = tel_parser.parse_star("* Hello!\n** Hello2\n*** Hello3\n");
+
+        TelescopeRenderer renderer;
+
+        renderer.render(response, tel_parser);
+    }
+
     return 0;
 }
